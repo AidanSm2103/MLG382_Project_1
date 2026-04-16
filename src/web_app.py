@@ -42,9 +42,11 @@ app.layout = html.Div([
 def analyze(n_clicks, *values):
     if n_clicks:
         try:
-            input_data = dict(zip(features, values))
+            # input_data = dict(zip(features, values))
 
-            processed = preprocess_input(input_data)
+            # processed = preprocess_input(input_data)
+            input_df = pd.DataFrame([input_data])
+            processed = preprocess_input(input_df)
 
             # Prediction
             pred = classifier.predict(processed)
