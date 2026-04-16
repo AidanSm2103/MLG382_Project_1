@@ -2,5 +2,7 @@ dash
 pandas
 numpy
 scikit-learn
-openpyxl
+xgboost
+shap
+joblib
 gunicorn
