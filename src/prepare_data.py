@@ -1,5 +1,5 @@
 def generate_recommendation(input_data):
-    bmi = input_data.get("BMI", 0)
+    bmi = input_data.get("bmi", 0)
     activity = input_data.get("physical_activity_minutes_per_week", 0)
 
     if bmi > 30:

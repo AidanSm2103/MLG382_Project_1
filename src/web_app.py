@@ -59,9 +59,8 @@ def analyze(n_clicks, *values):
             pred = classifier.predict(processed)
             risk_label = le.inverse_transform(pred)[0]
 
-            #cluster = kmeans.predict(processed)[0]
-            cluster = "N/A (segmentation mismatch)"
-
+            cluster = kmeans.predict(processed)[0]
+            
             recommendation = generate_recommendation(input_data)
 
             return (
