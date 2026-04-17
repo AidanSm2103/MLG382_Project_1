@@ -1,7 +1,10 @@
+# Rule-based recommendation system
 def generate_recommendation(input_data):
+    # Extract BMI value and physical activity level
     bmi = input_data.get("bmi", 0)
     activity = input_data.get("physical_activity_minutes_per_week", 0)
 
+    # Check bmi and activity against pre defined rules
     if bmi > 30:
         return "High risk! Increase physical activity and improve diet"
     elif activity < 2:
