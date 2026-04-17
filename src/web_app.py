@@ -12,25 +12,45 @@ server = app.server
 # Load models
 classifier, kmeans, le = load_models()
 
-# Example features (replace with your actual ones)
+# Features
 features = ["bmi", "Age", "physical_activity_minutes_per_week"]
 
 app.layout = html.Div([
-    html.H1("Diabetes Risk Decision Support System"),
-
-    html.H3("Enter Patient Details"),
-
     html.Div([
-        dcc.Input(id=feature, type='number', placeholder=feature)
-        for feature in features
+        html.H1("🩺 Diabetes Risk Decision Support System",
+                style={"textAlign": "center", "color": "#2c3e50"}),
+
+        html.P("Enter patient information below to generate risk prediction, clustering and recommendations.",
+               style={"textAlign": "center"})
     ]),
 
-    html.Button("Analyze Patient", id="analyze-btn"),
+    html.Div([
+        html.Div([
+            html.Label(feature, style={"fontWeight": "bold"}),
+            dcc.Input(id=feature, type='number',
+                      placeholder=f"Enter {feature}",
+                      style={"width": "100%", "padding": "10px", "marginBottom": "10px"})
+        ]) for feature in features
+    ], style={"width": "40%", "margin": "auto"}),
 
-    html.H3("Results"),
-    html.Div(id="risk-output"),
-    html.Div(id="cluster-output"),
-    html.Div(id="recommendation-output")
+    html.Div([
+        html.Button("Analyze Patient",
+                    id="analyze-btn",
+                    style={
+                        "backgroundColor": "#2ecc71",
+                        "color": "white",
+                        "padding": "10px 20px",
+                        "border": "none",
+                        "cursor": "pointer",
+                        "marginTop": "20px"
+                    })
+    ], style={"textAlign": "center"}),
+
+    html.Hr(),
+
+    html.Div(id="risk-output", style={"fontSize": "20px", "marginTop": "20px"}),
+    html.Div(id="cluster-output", style={"fontSize": "20px"}),
+    html.Div(id="recommendation-output", style={"fontSize": "20px"})
 ])
 
 @app.callback(
