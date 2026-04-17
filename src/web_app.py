@@ -18,18 +18,6 @@ classifier, kmeans, le = load_models()
 # These are the features the user will manually input in the web app
 features = ["bmi", "Age", "physical_activity_minutes_per_week"]
 
-# Convert risk label into numeric "severity score" for UI only
-def risk_to_score(label):
-    label = str(label).lower()
-
-    if "low" in label:
-        return 20
-    elif "moderate" in label:
-        return 60
-    elif "high" in label:
-        return 90
-    else:
-        return 10
 
 # Build web app layout
 app.layout = html.Div([
@@ -69,14 +57,6 @@ app.layout = html.Div([
     # Horizontal line separator
     html.Hr(),
 
-    # Progress bar (risk severity visual)
-    html.Div([
-        html.Label("Risk Severity Indicator"),
-        html.Div(id="risk-bar-container", style={"marginTop": "10px"})
-    ], style={"width": "40%", "margin": "auto"}),
-
-    html.Br(),
-
     # Output sections
     html.Div(id="risk-output", style={"fontSize": "20px", "marginTop": "20px"}),
     html.Div(id="cluster-output", style={"fontSize": "20px"}),
@@ -85,10 +65,9 @@ app.layout = html.Div([
 
 @app.callback(
     # Outputs displayed in UI
-    [Output("risk-output", "children"),
-     Output("cluster-output", "children"),
-     Output("recommendation-output", "children"),
-     Output("risk-bar-container", "children")],
+    Output("risk-output", "children"),
+    Output("cluster-output", "children"),
+    Output("recommendation-output", "children"),
     # Trigger event
     Input("analyze-btn", "n_clicks"),
 
@@ -115,10 +94,7 @@ def analyze(n_clicks, *values):
             pred = classifier.predict(processed)
 
             # Convert numeric label back to original category name
-            #risk_label = le.inverse_transform(pred)[0]
-            raw_pred = classifier.predict(processed)
-            risk_label = le.inverse_transform(raw_pred)[0]
-            risk_label_str = str(risk_label).lower()
+            risk_label = le.inverse_transform(pred)[0]
 
             # Predict segmentation group
             cluster = kmeans.predict(processed)[0]
@@ -126,52 +102,10 @@ def analyze(n_clicks, *values):
             # Generate recommendation rules
             recommendation = generate_recommendation(input_data)
 
-            # Progress bar logic
-            score = risk_to_score(risk_label)
-
-            # Choose color based on severity
-            if score < 40:
-                color = "#2ecc71"  # green
-            elif score < 70:
-                color = "#f1c40f"  # yellow
-            else:
-                color = "#e74c3c"  # red
-
-            progress_bar = html.Div([
-                html.Div(
-                    style={
-                        "width": f"{score}%",
-                        "height": "20px",
-                        "backgroundColor": color,
-                        "borderRadius": "5px"
-                    }
-                )
-            ], style={
-                "width": "100%",
-                "backgroundColor": "#ecf0f1",
-                "borderRadius": "5px"
-            })
-
-            # Status label
-            badge = html.Span(
-                risk_label,
-                style={
-                    "padding": "5px 10px",
-                    "borderRadius": "10px",
-                    "backgroundColor": color,
-                    "color": "white",
-                    "fontWeight": "bold",
-                    "marginLeft": "10px"
-                }
-            )
-
-
-            return html.Div([
-                html.Span(f"Risk Level: {risk_label} "),
-                badge],
+            return(
+                f"Risk Level: {risk_label}",
                 f"Patient Segment: Cluster {cluster}",
-                f"Recommendation: {recommendation}",
-                progress_bar
+                f"Recommendation: {recommendation}"
             )
 
         # Error checking
