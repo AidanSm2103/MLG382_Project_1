@@ -23,13 +23,13 @@ def risk_to_score(label):
     label = str(label).lower()
 
     if "low" in label:
-        return 25
+        return 20
     elif "moderate" in label:
         return 60
     elif "high" in label:
         return 90
     else:
-        return 50
+        return 10
 
 # Build web app layout
 app.layout = html.Div([
@@ -115,7 +115,10 @@ def analyze(n_clicks, *values):
             pred = classifier.predict(processed)
 
             # Convert numeric label back to original category name
-            risk_label = le.inverse_transform(pred)[0]
+            #risk_label = le.inverse_transform(pred)[0]
+            raw_pred = classifier.predict(processed)
+            risk_label = le.inverse_transform(raw_pred)[0]
+            risk_label_str = str(risk_label).lower()
 
             # Predict segmentation group
             cluster = kmeans.predict(processed)[0]
@@ -163,8 +166,9 @@ def analyze(n_clicks, *values):
             )
 
 
-            return (
-                f"Risk Level: {risk_label}, badge",
+            return html.Div([
+                html.Span(f"Risk Level: {risk_label} "),
+                badge],
                 f"Patient Segment: Cluster {cluster}",
                 f"Recommendation: {recommendation}",
                 progress_bar
