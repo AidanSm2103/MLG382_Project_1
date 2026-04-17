@@ -13,7 +13,7 @@ server = app.server
 classifier, kmeans, le = load_models()
 
 # Example features (replace with your actual ones)
-features = ["BMI", "Age", "Physical_Activity_Level"]
+features = ["bmi", "Age", "physical_activity_minutes_per_week"]
 
 app.layout = html.Div([
     html.H1("Diabetes Risk Decision Support System"),
