@@ -1,5 +1,6 @@
 from dash import Dash, html, dcc, Input, Output
 import pandas as pd
+import joblib
 
 from src.train_models import load_models
 from src.preprocess_data import preprocess_input
