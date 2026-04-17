@@ -41,21 +41,26 @@ app.layout = html.Div([
 )
 def analyze(n_clicks, *values):
     if n_clicks:
+
+        if not all(v is not None for v in values):
+            return "Please fill all inputs", "", ""
+
         try:
-            # input_data = dict(zip(features, values))
+            input_data = dict(zip(features, values))
 
-            # processed = preprocess_input(input_data)
-            input_df = pd.DataFrame([input_data])
-            processed = preprocess_input(input_df)
+            # Fill ALL missing features with 0
+            feature_cols = joblib.load("artifacts/feature_columns.pkl")
+            full_input = {col: 0 for col in feature_cols}
+            full_input.update(input_data)
 
-            # Prediction
+            processed = preprocess_input(full_input)
+
             pred = classifier.predict(processed)
             risk_label = le.inverse_transform(pred)[0]
 
-            # Cluster
-            cluster = kmeans.predict(processed)[0]
+            #cluster = kmeans.predict(processed)[0]
+            cluster = "N/A (segmentation mismatch)"
 
-            # Recommendation
             recommendation = generate_recommendation(input_data)
 
             return (
@@ -64,8 +69,8 @@ def analyze(n_clicks, *values):
                 f"Recommendation: {recommendation}"
             )
 
-        except:
-            return "Error in input", "", ""
+        except Exception as e:
+            return f"Error: {str(e)}", "", ""
 
     return "", "", ""
 
